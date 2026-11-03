@@ -2,6 +2,7 @@ import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
+import { useSearchParams } from "react-router";
 
 const FilterSidebar = () => {
   const categories = [
@@ -27,6 +28,21 @@ const FilterSidebar = () => {
     { id: "navy", label: "Azul Marino", color: "bg-blue-900" },
   ];
 
+  const [searchParams, setSearchParams] = useSearchParams()
+
+  const currentSize = searchParams.get('sizes')?.split(',') || [];
+
+  const handleSizeChange = (size: string) => {
+    const newSize = currentSize.includes(size) ? currentSize.filter(s => s !== size) : [...currentSize, size]
+    searchParams.set('page', '1')
+    if (newSize.length > 0) {
+      searchParams.set('sizes', newSize.join(','));
+    } else {
+      searchParams.delete('sizes'); // Elimina el parámetro si no hay tallas seleccionadas
+    }
+    setSearchParams(searchParams)
+  }
+
   return (
     <div className="w-64 space-y-6">
       <div>
@@ -38,7 +54,11 @@ const FilterSidebar = () => {
         <h4 className="font-medium">Tallas</h4>
         <div className="grid grid-cols-3 gap-2">
           {sizes.map((size) => (
-            <Button key={size.id} variant="outline" size="sm" className="h-8">
+            <Button key={size.id}
+              variant={currentSize.includes(size.id) ? "default" : "outline"}
+              size="sm"
+              className="h-8"
+              onClick={() => handleSizeChange(size.id)}>
               {size.label}
             </Button>
           ))}

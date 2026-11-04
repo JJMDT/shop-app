@@ -4,24 +4,22 @@ import { ChevronLeft, ChevronRight, Filter, Grid, List } from "lucide-react";
 import ProductCard from "./ProductCard";
 import FilterSidebar from "./FilterSidebar";
 import { useSearchParams } from "react-router";
-import {useState} from "react";
+import { useState } from "react";
 
 interface Props {
   products: Product[];
 }
 
-
 const ProductsGrid = ({ products }: Props) => {
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [showFilters, setShowFilters] = useState(false);
 
-  const [searchParams, setSearchParams] = useSearchParams()
-  const [showFilters, setShowFilters] = useState(false)
+  const viewMode = searchParams.get("viewMode") || "grid";
 
-  const viewMode = searchParams.get('viewMode') || 'grid'
-
-  const handleViewModeChange = (mode : string) => {
-    searchParams.set('viewMode',mode)
-    setSearchParams(searchParams)
-  }
+  const handleViewModeChange = (mode: string) => {
+    searchParams.set("viewMode", mode);
+    setSearchParams(searchParams);
+  };
 
   return (
     <section className="py-12 px-4 lg:px-8">
@@ -38,7 +36,7 @@ const ProductsGrid = ({ products }: Props) => {
             <Button
               variant="outline"
               size="sm"
-                onClick={() => setShowFilters(!showFilters)}
+              onClick={() => setShowFilters(!showFilters)}
               className="lg:hidden"
             >
               <Filter className="h-4 w-4 mr-2" />
@@ -74,20 +72,20 @@ const ProductsGrid = ({ products }: Props) => {
 
           {/* Mobile Filters */}
           {showFilters && (
-          <div className="fixed inset-0 z-50 bg-background p-4 lg:hidden">
-            <div className="flex items-center justify-between mb-6">
-              <h3 className="text-lg font-semibold">Filtros</h3>
-              <Button
-                variant="ghost"
-                size="sm"
+            <div className="fixed inset-0 z-50 bg-background p-4 lg:hidden">
+              <div className="flex items-center justify-between mb-6">
+                <h3 className="text-lg font-semibold">Filtros</h3>
+                <Button
+                  variant="ghost"
+                  size="sm"
                   onClick={() => setShowFilters(false)}
-              >
-                Cerrar
-              </Button>
+                >
+                  Cerrar
+                </Button>
+              </div>
+              <FilterSidebar />
             </div>
-            <FilterSidebar />
-          </div>
-          )} 
+          )}
 
           {/* Products Grid */}
           <div className="flex-1">

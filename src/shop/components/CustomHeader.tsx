@@ -16,9 +16,9 @@ const CustomHeader = () => {
   const handleSearch = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key !== "Enter") return;
     const newSearchParams = new URLSearchParams();
-    newSearchParams.set("search", inputRef.current?.value ?? "");
+    newSearchParams.set("query", inputRef.current?.value ?? "");
     if (inputRef.current?.value.length === 0) {
-      newSearchParams.delete("search");
+      newSearchParams.delete("query");
     }
     setSearchParams(newSearchParams);
     // searchParams.set("search", searchWord);

@@ -10,6 +10,7 @@ interface AuthState {
   token: string | null;
   //actions
   login: (email: string, password: string) => Promise<Boolean>;
+  logout: () => void;
 }
 // // Create store using the curried form of `create`
 // export const useCounterStore = create<Store>()((set) => ({
@@ -34,5 +35,10 @@ export const useAuthStore = create<AuthState>()((set) => ({
       set({ user: null, token: null });
       return false;
     }
+  },
+
+  logout: () => {
+    localStorage.removeItem("token");
+    set({ user: null, token: null });
   },
 }));

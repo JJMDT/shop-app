@@ -14,7 +14,6 @@ const useProducts = () => {
   let minPrice = undefined;
   let maxPrice = undefined;
 
-  console.log(query);
   const offset = (Number(page) - 1) * Number(limit);
 
   switch (price) {

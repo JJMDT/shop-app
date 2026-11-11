@@ -3,6 +3,7 @@ import type { User } from "@/interfaces/user.interface";
 import { create } from "zustand";
 import { loginAction } from "../actions/login.action";
 import { checkAuthAction } from "../actions/check-auth";
+import registerAction from "../actions/register.action";
 
 type AuthStatus = "authenticated" | "not-authenticated" | "checking";
 
@@ -18,6 +19,11 @@ interface AuthState {
   login: (email: string, password: string) => Promise<Boolean>;
   logout: () => void;
   checkAuthStatus: () => Promise<boolean>;
+  register: (
+    email: string,
+    password: string,
+    fullname: string,
+  ) => Promise<boolean>;
 }
 // // Create store using the curried form of `create`
 // export const useCounterStore = create<Store>()((set) => ({
@@ -73,6 +79,19 @@ export const useAuthStore = create<AuthState>()((set, get) => ({
         token: undefined,
         authStatus: "not-authenticated",
       });
+      return false;
+    }
+  },
+
+  register: async (email: string, password: string, fullname: string) => {
+    try {
+      const data = await registerAction(email, password, fullname);
+      localStorage.setItem("token", data.token);
+      set({ user: data.user, token: data.token, authStatus: "authenticated" });
+      return true;
+    } catch (error) {
+      localStorage.removeItem("token");
+      set({ user: null, token: null, authStatus: "not-authenticated" });
       return false;
     }
   },

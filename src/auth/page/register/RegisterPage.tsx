@@ -3,14 +3,35 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { CustomLogo } from "@/components/custom/CustomLogo";
-import { Link } from "react-router";
+import { Link, useNavigate } from "react-router";
+import { useAuthStore } from "@/auth/store/auth.store";
 
 export const RegisterPage = () => {
+  const navigate = useNavigate();
+
+  const { register } = useAuthStore();
+
+  const handleRegister = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    const formData = new FormData(e.target as HTMLFormElement);
+    const email = formData.get("email") as string;
+    const password = formData.get("password") as string;
+    const fullName = formData.get("fullname") as string;
+
+    console.log({ email, password, fullName });
+    const isValid = await register(email, password, fullName);
+    if (isValid) {
+      navigate("/");
+      return;
+    }
+  };
+
   return (
     <div className="flex flex-col gap-6">
       <Card className="overflow-hidden p-0">
         <CardContent className="grid p-0 md:grid-cols-2">
-          <form className="p-6 md:p-8">
+          <form className="p-6 md:p-8" onSubmit={handleRegister}>
             <div className="flex flex-col gap-6">
               <div className="flex flex-col items-center text-center">
                 <CustomLogo />
@@ -19,18 +40,22 @@ export const RegisterPage = () => {
                 </p>
               </div>
               <div className="grid gap-2">
-                <Label htmlFor="email">Nombre</Label>
-                <Input id="name" type="text" placeholder="Juan" required />
+                <Label htmlFor="fullname">Nombre y Apellido</Label>
+                <Input
+                  id="fullname"
+                  name="fullname"
+                  type="text"
+                  placeholder="Juan Perez"
+                  required
+                />
               </div>
-              <div className="grid gap-2">
-                <Label htmlFor="email">Apellido</Label>
-                <Input id="lastname" type="text" placeholder="Perez" required />
-              </div>
+
               <div className="grid gap-2">
                 <Label htmlFor="email">Correo electronico</Label>
                 <Input
                   id="email"
                   type="email"
+                  name="email"
                   placeholder="m@example.com"
                   required
                 />
@@ -42,6 +67,7 @@ export const RegisterPage = () => {
                 <Input
                   id="password"
                   type="password"
+                  name="password"
                   required
                   placeholder="contraseña"
                 />

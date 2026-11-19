@@ -6,14 +6,32 @@ import { useRef, useState } from "react";
 import { Link } from "react-router";
 import { useForm } from "react-hook-form";
 import { cn } from "cn";
+
 interface Props {
   title: string;
   subtitle: string;
   product: Product;
+  isPending?: Boolean;
+
+  //metodos
+  onSubmit: (
+    productLike: Partial<Product> & { files?: File[] },
+  ) => Promise<void>;
 }
+
+interface InputForm extends Product {
+  files?: File[];
+}
+
 const availableSizes: Size[] = ["XS", "S", "M", "L", "XL", "XXL"];
 
-const ProductForm = ({ title, subtitle, product }: Props) => {
+const ProductForm = ({
+  title,
+  subtitle,
+  product,
+  onSubmit,
+  isPending,
+}: Props) => {
   const {
     register,
     handleSubmit,
@@ -21,12 +39,14 @@ const ProductForm = ({ title, subtitle, product }: Props) => {
     setValue,
     watch,
     formState: { errors },
-  } = useForm({
+  } = useForm<InputForm>({
     defaultValues: product,
   });
 
   const selectedSizes = watch("sizes");
   const selectedTags = watch("tags") || [];
+  const currentStock = watch("stock");
+  const [files, setFiles] = useState<File[]>([]);
   const inputRef = useRef<HTMLInputElement>(null);
 
   const [dragActive, setDragActive] = useState(false);
@@ -73,22 +93,25 @@ const ProductForm = ({ title, subtitle, product }: Props) => {
     e.stopPropagation();
     setDragActive(false);
     const files = e.dataTransfer.files;
-    console.log(files);
+    if (!files) return;
+
+    setFiles((prev) => [...prev, ...Array.from(files)]);
+    const currentFiles = getValues("files") || [];
+    setValue("files", [...currentFiles, ...Array.from(files)]);
   };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
-    console.log(files);
+    if (!files) return;
+
+    setFiles((prev) => [...prev, ...Array.from(files)]);
+    const currentFiles = getValues("files") || [];
+    setValue("files", [...currentFiles, ...Array.from(files)]);
   };
 
   //   const handleInputChange = (field: keyof Product, value: string | number) => {
   //     setProduct((prev) => ({ ...prev, [field]: value }));
   //   };
-  //remover en un futuro
-
-  const onSubmitF = (productLike: Product) => {
-    console.log("onsubmit", productLike);
-  };
 
   const handleAddTag = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter" || e.key === ",") {
@@ -102,7 +125,7 @@ const ProductForm = ({ title, subtitle, product }: Props) => {
   };
 
   return (
-    <form onSubmit={handleSubmit(onSubmitF)}>
+    <form onSubmit={handleSubmit(onSubmit)}>
       <div className="flex justify-between items-center">
         <AdminTitle title={title} subtitle={subtitle} />
         <div className="flex justify-end mb-10 gap-4">
@@ -113,7 +136,7 @@ const ProductForm = ({ title, subtitle, product }: Props) => {
             </Link>
           </Button>
 
-          <Button type="submit">
+          <Button type="submit" disabled={isPending ? true : false}>
             <SaveAll className="w-4 h-4" />
             Guardar cambios
           </Button>
@@ -430,6 +453,25 @@ const ProductForm = ({ title, subtitle, product }: Props) => {
                   ))}
                 </div>
               </div>
+
+              {/* imagenes por cargar  */}
+              <div
+                className={cn("mt-6 space-y-3", { hidden: files.length === 0 })}
+              >
+                <h3 className="text-sm font-medium text-slate-700">
+                  Imágenes por cargar
+                </h3>
+                <div className="grid grid-cols-2 gap-3">
+                  {files.map((file, index) => (
+                    <img
+                      src={URL.createObjectURL(file)}
+                      alt="Product"
+                      className="w-full h-full object-cover rounded-lg"
+                      key={index}
+                    />
+                  ))}
+                </div>
+              </div>
             </div>
 
             {/* Product Status */}
@@ -454,16 +496,16 @@ const ProductForm = ({ title, subtitle, product }: Props) => {
                   </span>
                   <span
                     className={`px-2 py-1 text-xs font-medium rounded-full ${
-                      product.stock > 5
+                      currentStock > 5
                         ? "bg-green-100 text-green-800"
-                        : product.stock > 0
+                        : currentStock > 0
                           ? "bg-yellow-100 text-yellow-800"
                           : "bg-red-100 text-red-800"
                     }`}
                   >
-                    {product.stock > 5
+                    {currentStock > 5
                       ? "En stock"
-                      : product.stock > 0
+                      : currentStock > 0
                         ? "Bajo stock"
                         : "Sin stock"}
                   </span>
@@ -483,7 +525,7 @@ const ProductForm = ({ title, subtitle, product }: Props) => {
                     Tallas disponibles
                   </span>
                   <span className="text-sm text-slate-600">
-                    {product.sizes.length} tallas
+                    {selectedSizes.length} tallas
                   </span>
                 </div>
               </div>

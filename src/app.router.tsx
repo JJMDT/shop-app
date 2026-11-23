@@ -1,4 +1,4 @@
-import { createBrowserRouter, Navigate } from "react-router";
+import { createBrowserRouter, createHashRouter, Navigate } from "react-router";
 import ShopLayaout from "./shop/layout/ShopLayaout";
 import HomePage from "./shop/pages/home/HomePage";
 import ProductPage from "./shop/pages/product/ProductPage";
@@ -17,7 +17,7 @@ import {
 const AuthLayout = lazy(() => import("./auth/layout/authLayout"));
 const AdmintLayout = lazy(() => import("./admin/layout/AdmintLayout"));
 
-export const appRouter = createBrowserRouter([
+export const appRouter = createHashRouter([
   {
     path: "/",
     element: <ShopLayaout />,

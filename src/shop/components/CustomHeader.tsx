@@ -8,7 +8,7 @@ import { CustomLogo } from "@/components/custom/CustomLogo";
 import { useAuthStore } from "@/auth/store/auth.store";
 
 const CustomHeader = () => {
-  const [searchParams, setSearchParams] = useSearchParams();
+  const [, setSearchParams] = useSearchParams();
 
   const { authStatus, logout, isAdmin } = useAuthStore();
 
@@ -24,8 +24,6 @@ const CustomHeader = () => {
       newSearchParams.delete("query");
     }
     setSearchParams(newSearchParams);
-    // searchParams.set("search", searchWord);
-    // setSearchParams(searchParams);
   };
   return (
     <header className="sticky top-0 z-50 w-full border-b backdrop-blur bg-slate-50">

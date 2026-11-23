@@ -5,12 +5,12 @@ import { Label } from "@/components/ui/label";
 import { useSearchParams } from "react-router";
 
 const FilterSidebar = () => {
-  const categories = [
-    { id: "tshirts", label: "Camisetas", count: 12 },
-    { id: "hoodies", label: "Sudaderas", count: 8 },
-    { id: "jackets", label: "Chaquetas", count: 6 },
-    { id: "accessories", label: "Accesorios", count: 15 },
-  ];
+  // const categories = [
+  //   { id: "tshirts", label: "Camisetas", count: 12 },
+  //   { id: "hoodies", label: "Sudaderas", count: 8 },
+  //   { id: "jackets", label: "Chaquetas", count: 6 },
+  //   { id: "accessories", label: "Accesorios", count: 15 },
+  // ];
 
   const sizes = [
     { id: "xs", label: "XS" },

@@ -29,8 +29,8 @@ export const AdminProductPage = () => {
         });
         navigate(`/admin/products/${data.id}`);
       },
-      onError: (error) => {
-        console.log(error);
+      onError: (_) => {
+        // console.log(error);
         toast.error("Error al actualizar el producto");
       },
     });
